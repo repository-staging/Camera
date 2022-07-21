@@ -6,6 +6,7 @@ import android.graphics.Bitmap.CompressFormat
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -46,7 +47,11 @@ open class CaptureActivity : MainActivity() {
         confirmButton = findViewById(R.id.confirm_button)
 
         if (intent.extras?.containsKey(EXTRA_OUTPUT) == true) {
-            outputUri = intent.extras?.get(EXTRA_OUTPUT) as Uri
+            outputUri = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                intent.extras?.get(EXTRA_OUTPUT) as Uri
+            } else {
+                intent.getParcelableExtra(EXTRA_OUTPUT, Uri::class.java)
+            }
         }
 
         // Disable capture button for a while (to avoid picture capture)
