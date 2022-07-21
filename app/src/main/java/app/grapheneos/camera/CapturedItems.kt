@@ -6,6 +6,7 @@ import android.content.ContentUris
 import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
+import android.os.Build
 import android.os.Parcel
 import android.os.Parcelable
 import android.provider.BaseColumns
@@ -69,7 +70,12 @@ class CapturedItem(
             override fun createFromParcel(source: Parcel): CapturedItem {
                 val type = source.readByte().toInt()
                 val dateString = source.readString()!!
-                val uri = source.readParcelable<Uri>(null)!!
+                val uri = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                    @Suppress("DEPRECATION")
+                    source.readParcelable<Uri>(null)!!
+                } else {
+                    source.readParcelable(null, Uri::class.java)!!
+                }
                 return CapturedItem(type, dateString, uri)
             }
 
