@@ -2,6 +2,7 @@ package app.grapheneos.camera.ui.activities
 
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -31,7 +32,11 @@ class VideoPlayer : AppCompatActivity() {
             throw Exception("Video Player requires videoUri")
         }
 
-        val uri = intent.extras!!.get("videoUri") as Uri
+        val uri = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            intent.extras!!.get("videoUri") as Uri
+        } else {
+            intent.getParcelableExtra("videoUri", Uri::class.java)
+        }
 
         val videoView = binding.videoPlayer
 
