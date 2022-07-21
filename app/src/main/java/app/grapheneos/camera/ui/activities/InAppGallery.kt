@@ -11,6 +11,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.media.MediaMetadataRetriever
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.provider.DocumentsContract
@@ -446,7 +447,12 @@ class InAppGallery : AppCompatActivity() {
         gallerySlider.setPageTransformer(GSlideTransformer())
 
         val showVideosOnly = intent.getBooleanExtra(INTENT_KEY_VIDEO_ONLY_MODE, false)
-        val listOfSecureModeCapturedItems = intent.getParcelableArrayListExtra<CapturedItem>(INTENT_KEY_LIST_OF_SECURE_MODE_CAPTURED_ITEMS)
+        val listOfSecureModeCapturedItems = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            @Suppress("DEPRECATION")
+            intent.getParcelableArrayListExtra<CapturedItem>(INTENT_KEY_LIST_OF_SECURE_MODE_CAPTURED_ITEMS)
+        } else {
+            intent.getParcelableArrayListExtra(INTENT_KEY_LIST_OF_SECURE_MODE_CAPTURED_ITEMS, CapturedItem::class.java)
+        }
 
         asyncLoaderOfCapturedItems.execute {
             val unprocessedItems: List<CapturedItem> = try {
@@ -479,7 +485,12 @@ class InAppGallery : AppCompatActivity() {
             mainExecutor.execute { asyncResultReady(items) }
         }
 
-        val lastCapturedItem = intent.getParcelableExtra<CapturedItem>(INTENT_KEY_LAST_CAPTURED_ITEM)
+        val lastCapturedItem = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            @Suppress("DEPRECATION")
+            intent.getParcelableExtra<CapturedItem>(INTENT_KEY_LAST_CAPTURED_ITEM)
+        } else {
+            intent.getParcelableExtra(INTENT_KEY_LAST_CAPTURED_ITEM, CapturedItem::class.java)
+        }
 
         if (lastCapturedItem != null) {
             val list = ArrayList<CapturedItem>()
