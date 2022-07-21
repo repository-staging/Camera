@@ -1410,7 +1410,7 @@ open class MainActivity : AppCompatActivity(),
         }
     }
 
-    override fun onSingleTapConfirmed(p0: MotionEvent?): Boolean {
+    override fun onSingleTapConfirmed(p0: MotionEvent): Boolean {
         return false
     }
 
